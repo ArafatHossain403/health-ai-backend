@@ -1,13 +1,13 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get } from '@nestjs/common';
 
-@Controller("/users")
- export class UsersController{
-    @Get("/profile")
-    getProfile(){
-        return {
-            name: 'sanim',
-            address: 'khulna',
-            age: 20
-        };
-    }
+@Controller('/users')
+export class UsersController {
+  @Get('/profile')
+  getProfile() {
+    return {
+      name: 'sanim',
+      address: 'khulna',
+      age: 20,
+    };
+  }
 }
