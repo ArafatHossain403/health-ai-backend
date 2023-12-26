@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Request, Get } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User as UserModel } from '@prisma/client';
 
@@ -19,15 +19,14 @@ export class AppController {
   ): Promise<UserModel> {
     return this.userService.createUser(userData);
   }
-
   @Post('login')
-  async login(@Request() req) {
-    return req.user; // req.user will contain the authenticated user details
-  }
-
-  // Example of a protected route
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  async loginUser(
+    @Body() loginData: { email: string; password: string },
+  ): Promise<{ accessToken: string }> {
+    const accessToken = await this.userService.loginUser(
+      loginData.email,
+      loginData.password,
+    );
+    return { accessToken };
   }
 }

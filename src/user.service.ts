@@ -1,10 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { User, Prisma } from '@prisma/client';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  usersService: any;
+  private readonly jwtSecret: string;
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   async user(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
@@ -32,71 +38,41 @@ export class UserService {
   }
 
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    // check if user exist with this email
+    const { email } = data;
+
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      throw new Error('User with this email already exists');
+    }
 
     return this.prisma.user.create({
       data,
     });
   }
 
-  // async createUser(data: Prisma.UserCreateInput): Promise<User> {
-  //   // Destructure the email from the data object
-  //   const { email } = data;
-
-  //   // Check if a user with the given email already exists
-  //   const existingUser = await this.prisma.user.findUnique({
-  //     where: { email },
-  //   });
-
-  //   // If a user with the email already exists, you can handle this accordingly (throw an error, return a message, etc.)
-  //   if (existingUser) {
-  //     throw new Error('User with this email already exists');
-  //   }
-
-  //   // If the user doesn't exist, create a new user
-  //   return this.prisma.user.create({
-  //     data,
-  //   });
-  // }
-
-  async validateUser(email: string, password: string): Promise<any> {
-    // Find user by email
+  async validateUser(email: string, password: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
 
+    if (user && user.password === password) {
+      return user;
+    }
+
+    return null;
+  }
+
+  async loginUser(email: string, password: string): Promise<string> {
+    const user = await this.validateUser(email, password);
+
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Validate password (you might want to use a password hashing library)
-    const isPasswordValid = user.password === password; // This is a basic example, not secure
-    if (!isPasswordValid) {
-      return null; // Return null for invalid credentials
-    }
-
-    // Return user details upon successful login
-    return {
-      userId: user.id,
-      email: user.email,
-      // Add other user fields as needed
-    };
-  }
-
-  async updateUser(params: {
-    where: Prisma.UserWhereUniqueInput;
-    data: Prisma.UserUpdateInput;
-  }): Promise<User> {
-    const { where, data } = params;
-    return this.prisma.user.update({
-      data,
-      where,
-    });
-  }
-
-  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.prisma.user.delete({
-      where,
-    });
+    const payload = { sub: user.id, email: user.email };
+    return this.jwtService.sign(payload);
   }
 }
