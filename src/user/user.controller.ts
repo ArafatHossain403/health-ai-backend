@@ -1,7 +1,9 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User, User as UserModel } from '@prisma/client';
-// import { RolesGuard } from 'src/helper/auth.guard';
+import { AdminGuard } from 'src/guards/admin.guard';
+import { Request } from 'express';
+import { UserGuard } from 'src/guards/users.guard';
 
 @Controller('user')
 export class UserController {
@@ -16,10 +18,11 @@ export class UserController {
       password: string;
       mobile: string;
       address: string;
+      gender: string;
       birth_date: string;
     },
   ): Promise<UserModel> {
-    return this.userService.createUser(userData);
+    return await this.userService.createUser(userData);
   }
 
   @Post('login')
@@ -33,8 +36,15 @@ export class UserController {
     return { accessToken };
   }
 
+  @UseGuards(UserGuard)
+  @Get('/profile')
+  async getUSerProfile(@Req() req: Request): Promise<User> {
+    return await this.userService.getUserProfile(req);
+  }
+
+  @UseGuards(AdminGuard)
   @Get('/list')
   async getAllUsers(): Promise<User[]> {
-    return this.userService.getAllUsers();
+    return await this.userService.getAllUsers();
   }
 }

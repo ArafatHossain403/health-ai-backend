@@ -3,8 +3,8 @@ import { PrismaService } from '../helper/prisma.service';
 import { User, Prisma, DiabetesDiagnosisHistory } from '@prisma/client';
 import {
   calculateAgeInYears,
+  calculateBMI,
   callFetcher,
-  generateRandPedigree,
   getMLServerBaseUrl,
 } from 'src/helper/functions';
 
@@ -17,8 +17,10 @@ export class DiagnosisService {
     user: User,
   ): Promise<DiabetesDiagnosisHistory> {
     data.age = calculateAgeInYears(user.birth_date);
-    data.pedigree = generateRandPedigree();
+    data.bmi = calculateBMI(data.height, data.weight);
+
     data.outcome = await this.predictDiabetesOutcome(data);
+
     return this.prisma.diabetesDiagnosisHistory.create({
       data: {
         user_id: user.id,
@@ -27,10 +29,11 @@ export class DiagnosisService {
         bp: data.bp,
         skin_thickness: data.skin_thickness,
         insulin: data.insulin,
+        height: data.height,
+        weight: data.weight,
         bmi: data.bmi,
         age: data.age,
-        pedigree: data.pedigree,
-        outcome: 1,
+        outcome: data.outcome,
       },
     });
   }
@@ -42,17 +45,17 @@ export class DiagnosisService {
     const payload_data = {
       features: [
         [
-          data.pregnancies,
+          data.pregnancies || 0,
           data.glucose,
           data.bp,
           data.skin_thickness,
           data.insulin,
           data.bmi,
-          data.pedigree,
           data.age,
         ],
       ],
     };
+
     const response = await callFetcher(
       ml_server_url,
       '/predict-diabetes',

@@ -1,20 +1,15 @@
-// users.guard.ts
-
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from '../helper/prisma.service';
 
 @Injectable()
-export class AdminGuard implements CanActivate {
+export class UserGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
   ) {}
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = request.headers.authorization?.replace('Bearer ', '');
 
@@ -27,17 +22,13 @@ export class AdminGuard implements CanActivate {
       const adminEmail = decoded.email;
 
       // Retrieve user from the database based on the email
-      return this.prisma.admin
-        .findUnique({ where: { email: adminEmail } })
-        .then((admin) => {
-          if (!admin) {
-            return false;
-          }
-
-          // Attach user data to the request for use in the route handler
-          request.admin = admin;
-          return true;
-        });
+      const user = await this.prisma.user.findUnique({
+        where: { email: adminEmail },
+      });
+      if (user) {
+        request.user = user;
+        return true;
+      } else false;
     } catch (error) {
       return false;
     }

@@ -10,23 +10,16 @@ import { AdminController } from './admin/admin.controller';
 import { AdminService } from './admin/admin.service';
 import { DiagnosisController } from './diagnosis/diagnosis.controller';
 import { DiagnosisService } from './diagnosis/diagnosis.service';
-import { RolesGuard } from './helper/users.guard';
 
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: 'your-secret-key', // Change this to a secure random key
-      signOptions: { expiresIn: '1h' }, // Adjust the expiration time as needed
+      secret: process.env.JWT_SECRET || 'secretText', // Change this to a secure random key
+      signOptions: { expiresIn: process.env.JWT_EXPIRY || '24h' }, // Adjust the expiration time as needed
     }),
   ],
   controllers: [UserController, AdminController, DiagnosisController],
-  providers: [
-    UserService,
-    AdminService,
-    PrismaService,
-    DiagnosisService,
-    RolesGuard,
-  ],
+  providers: [UserService, AdminService, PrismaService, DiagnosisService],
 })
 export class AppModule {}

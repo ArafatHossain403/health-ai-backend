@@ -1,12 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../helper/prisma.service';
 import { User, Prisma } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @Injectable()
 export class UserService {
-  usersService: any;
-  private readonly jwtSecret: string;
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
@@ -45,10 +44,10 @@ export class UserService {
     });
 
     if (existingUser) {
-      throw new Error('User with this email already exists');
+      throw new BadRequestException('User with this email already exists');
     }
 
-    return this.prisma.user.create({
+    return await this.prisma.user.create({
       data: {
         ...data,
         birth_date: new Date(data.birth_date),
@@ -72,14 +71,24 @@ export class UserService {
     const user = await this.validateUser(email, password);
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new BadRequestException('Invalid credentials');
     }
 
     const payload = { sub: user.id, email: user.email };
     return this.jwtService.sign(payload);
   }
+
+  //get user profile
+  async getUserProfile(req: Request): Promise<User> {
+    const user: User = req['user'];
+    if (!user) throw new BadRequestException('Invalid access token');
+    return await this.prisma.user.findFirst({
+      where: { id: user.id },
+    });
+  }
+
   //get all users
   async getAllUsers(): Promise<User[]> {
-    return this.prisma.user.findMany();
+    return await this.prisma.user.findMany();
   }
 }

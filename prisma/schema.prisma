@@ -25,6 +25,7 @@ model User {
   password   String
   mobile     String
   address    String
+  gender     String
   birth_date DateTime
   status     Int      @default(1)
 
@@ -32,18 +33,19 @@ model User {
 }
 
 model DiabetesDiagnosisHistory {
-  id             Int   @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   user_id        Int
-  pregnancies    Float
+  pregnancies    Float    @default(0)
   glucose        Float
   bp             Float
   skin_thickness Float
   insulin        Float
+  height         Float
+  weight         Float
   bmi            Float
-  pedigree       Float
   age            Float
   outcome        Int
-  created_at     DateTime  @default(now())
+  created_at     DateTime @default(now())
 
   user User @relation(fields: [user_id], references: [id])
 }

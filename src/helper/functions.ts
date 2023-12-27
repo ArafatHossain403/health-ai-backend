@@ -5,6 +5,12 @@ export function calculateAgeInYears(birth_date: Date): number {
   return Number(years);
 }
 
+export function calculateBMI(height_cm: number, weight_kg: number): number {
+  const height_meter = height_cm / 100;
+  const bmi = weight_kg / height_meter ** 2;
+  return Number(bmi.toFixed(1));
+}
+
 export function generateRandPedigree(decimal = 3): number {
   const rand = Math.random();
   return Number(rand.toFixed(decimal));
