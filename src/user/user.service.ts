@@ -49,7 +49,10 @@ export class UserService {
     }
 
     return this.prisma.user.create({
-      data,
+      data: {
+        ...data,
+        birth_date: new Date(data.birth_date),
+      },
     });
   }
 

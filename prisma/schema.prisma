@@ -11,22 +11,39 @@ datasource db {
 }
 
 model Admin {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  name  String? 
-  password String?
-  status Int @default(1)
-}
-
-model User{
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  name  String?
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  name     String
   password String
-  mobile String
-  address String
-  status Int @default(1)
+  status   Int    @default(1)
 }
 
+model User {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  name       String
+  password   String
+  mobile     String
+  address    String
+  birth_date DateTime
+  status     Int      @default(1)
 
+  diabetes_diagnosis_histories DiabetesDiagnosisHistory[]
+}
 
+model DiabetesDiagnosisHistory {
+  id             Int   @id @default(autoincrement())
+  user_id        Int
+  pregnancies    Float
+  glucose        Float
+  bp             Float
+  skin_thickness Float
+  insulin        Float
+  bmi            Float
+  pedigree       Float
+  age            Float
+  outcome        Int
+  created_at     DateTime  @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}

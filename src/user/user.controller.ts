@@ -10,11 +10,12 @@ export class UserController {
   async signupUser(
     @Body()
     userData: {
-      name?: string;
+      name: string;
       email: string;
       password: string;
       mobile: string;
       address: string;
+      birth_date: string;
     },
   ): Promise<UserModel> {
     return this.userService.createUser(userData);
@@ -31,7 +32,7 @@ export class UserController {
     return { accessToken };
   }
 
-  @Get('/allUsers')
+  @Get('/list')
   async getAllUsers(): Promise<User[]> {
     return this.userService.getAllUsers();
   }

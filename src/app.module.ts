@@ -8,6 +8,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AdminController } from './admin/admin.controller';
 import { AdminService } from './admin/admin.service';
+import { DiagnosisController } from './diagnosis/diagnosis.controller';
+import { DiagnosisService } from './diagnosis/diagnosis.service';
 
 @Module({
   imports: [
@@ -17,7 +19,7 @@ import { AdminService } from './admin/admin.service';
       signOptions: { expiresIn: '1h' }, // Adjust the expiration time as needed
     }),
   ],
-  controllers: [UserController, AdminController],
-  providers: [UserService, AdminService, PrismaService],
+  controllers: [UserController, AdminController, DiagnosisController],
+  providers: [UserService, AdminService, PrismaService, DiagnosisService],
 })
 export class AppModule {}
