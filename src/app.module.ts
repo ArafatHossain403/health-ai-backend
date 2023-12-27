@@ -10,7 +10,7 @@ import { AdminController } from './admin/admin.controller';
 import { AdminService } from './admin/admin.service';
 import { DiagnosisController } from './diagnosis/diagnosis.controller';
 import { DiagnosisService } from './diagnosis/diagnosis.service';
-import { RolesGuard } from './helper/auth.guard';
+import { RolesGuard } from './helper/users.guard';
 
 @Module({
   imports: [

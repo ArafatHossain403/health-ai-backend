@@ -1,4 +1,4 @@
-// roles.guard.ts
+// users.guard.ts
 
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from './prisma.service';
 
 @Injectable()
-export class RolesGuard implements CanActivate {
+export class AdminGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
@@ -24,18 +24,18 @@ export class RolesGuard implements CanActivate {
 
     try {
       const decoded = this.jwtService.verify(token);
-      const userEmail = decoded.email;
+      const adminEmail = decoded.email;
 
       // Retrieve user from the database based on the email
-      return this.prisma.user
-        .findUnique({ where: { email: userEmail } })
-        .then((user) => {
-          if (!user) {
+      return this.prisma.admin
+        .findUnique({ where: { email: adminEmail } })
+        .then((admin) => {
+          if (!admin) {
             return false;
           }
 
           // Attach user data to the request for use in the route handler
-          request.user = user;
+          request.admin = admin;
           return true;
         });
     } catch (error) {
