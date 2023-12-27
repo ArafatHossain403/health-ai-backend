@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from '../helper/prisma.service';
 import { User, Prisma } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 
@@ -74,5 +74,9 @@ export class UserService {
 
     const payload = { sub: user.id, email: user.email };
     return this.jwtService.sign(payload);
+  }
+  //get all users
+  async getAllUsers(): Promise<User[]> {
+    return this.prisma.user.findMany();
   }
 }
