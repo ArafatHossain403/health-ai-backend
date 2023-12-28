@@ -21,10 +21,12 @@ export class DiagnosisService {
 
     data.outcome = await this.predictDiabetesOutcome(data);
 
-    return this.prisma.diabetesDiagnosisHistory.create({
+    return await this.prisma.diabetesDiagnosisHistory.create({
       data: {
-        user_id: user.id,
-        pregnancies: data.pregnancies,
+        user: {
+          connect: { id: user.id },
+        },
+        pregnancies: data.pregnancies || 0,
         glucose: data.glucose,
         bp: data.bp,
         skin_thickness: data.skin_thickness,
