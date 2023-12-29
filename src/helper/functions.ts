@@ -6,9 +6,18 @@ export function calculateAgeInYears(birth_date: Date): number {
 }
 
 export function calculateBMI(height_cm: number, weight_kg: number): number {
+  height_cm = Number(height_cm);
+  weight_kg = Number(weight_kg);
   const height_meter = height_cm / 100;
   const bmi = weight_kg / height_meter ** 2;
   return Number(bmi.toFixed(1));
+}
+
+export function calculateMeanBP(s_bp: number, d_bp: number): number {
+  s_bp = Number(s_bp);
+  d_bp = Number(d_bp);
+  const mbp = d_bp + (s_bp - d_bp) / 3;
+  return Number(mbp.toFixed(2));
 }
 
 export function generateRandPedigree(decimal = 3): number {

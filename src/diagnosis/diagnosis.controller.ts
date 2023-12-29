@@ -16,7 +16,8 @@ export class DiagnosisController {
     data: {
       pregnancies: number;
       glucose: number;
-      bp: number;
+      s_bp: number;
+      d_bp: number;
       skin_thickness: number;
       insulin: number;
       height: number;

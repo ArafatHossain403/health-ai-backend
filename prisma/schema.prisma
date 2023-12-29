@@ -37,7 +37,9 @@ model DiabetesDiagnosisHistory {
   user_id        Int
   pregnancies    Float    @default(0)
   glucose        Float
-  bp             Float
+  s_bp           Float
+  d_bp           Float
+  mbp            Float
   skin_thickness Float
   insulin        Float
   height         Float

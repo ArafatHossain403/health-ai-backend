@@ -4,6 +4,7 @@ import { User, Prisma, DiabetesDiagnosisHistory } from '@prisma/client';
 import {
   calculateAgeInYears,
   calculateBMI,
+  calculateMeanBP,
   callFetcher,
   getMLServerBaseUrl,
 } from 'src/helper/functions';
@@ -18,6 +19,7 @@ export class DiagnosisService {
   ): Promise<DiabetesDiagnosisHistory> {
     data.age = calculateAgeInYears(user.birth_date);
     data.bmi = calculateBMI(data.height, data.weight);
+    data.mbp = calculateMeanBP(data.s_bp, data.d_bp);
 
     data.outcome = await this.predictDiabetesOutcome(data);
 
@@ -28,7 +30,9 @@ export class DiagnosisService {
         },
         pregnancies: data.pregnancies || 0,
         glucose: data.glucose,
-        bp: data.bp,
+        s_bp: data.s_bp,
+        d_bp: data.d_bp,
+        mbp: data.mbp,
         skin_thickness: data.skin_thickness,
         insulin: data.insulin,
         height: data.height,
@@ -49,7 +53,7 @@ export class DiagnosisService {
         [
           data.pregnancies || 0,
           data.glucose,
-          data.bp,
+          data.mbp,
           data.skin_thickness,
           data.insulin,
           data.bmi,
