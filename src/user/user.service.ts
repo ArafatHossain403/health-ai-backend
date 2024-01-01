@@ -57,7 +57,7 @@ export class UserService {
 
   async validateUser(email: string, password: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
-      where: { email },
+      where: { email: email },
     });
 
     if (user && user.password === password) {

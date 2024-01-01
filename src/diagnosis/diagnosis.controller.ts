@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, Get } from '@nestjs/common';
 import { DiagnosisService } from './diagnosis.service';
 import { DiabetesDiagnosisHistory } from '@prisma/client';
 import { UserGuard } from 'src/guards/users.guard';
@@ -26,5 +26,14 @@ export class DiagnosisController {
   ): Promise<DiabetesDiagnosisHistory> {
     const user = req['user'];
     return await this.service.diagnoseDiabetes(data, user);
+  }
+
+  @UseGuards(UserGuard)
+  @Get('diabetes/history')
+  async getAllDiabetesHistory(
+    @Req() req: Request,
+  ): Promise<DiabetesDiagnosisHistory[]> {
+    const user = req['user'];
+    return await this.service.getAllDiabetesHistoryByUserId(user);
   }
 }

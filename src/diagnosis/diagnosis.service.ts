@@ -75,4 +75,13 @@ export class DiagnosisService {
       throw new Error(response['application_error_message']);
     }
   }
+  async getAllDiabetesHistoryByUserId(
+    user: User,
+  ): Promise<DiabetesDiagnosisHistory[]> {
+    const histories = await this.prisma.diabetesDiagnosisHistory.findMany({
+      where: { user_id: user.id },
+    });
+    console.log(histories);
+    return histories;
+  }
 }
