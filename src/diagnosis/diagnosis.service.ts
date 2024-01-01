@@ -84,4 +84,7 @@ export class DiagnosisService {
     console.log(histories);
     return histories;
   }
+  async getAllUsersDiabetesHistory(): Promise<DiabetesDiagnosisHistory[]> {
+    return await this.prisma.diabetesDiagnosisHistory.findMany();
+  }
 }

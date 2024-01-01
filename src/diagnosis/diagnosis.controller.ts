@@ -3,6 +3,7 @@ import { DiagnosisService } from './diagnosis.service';
 import { DiabetesDiagnosisHistory } from '@prisma/client';
 import { UserGuard } from 'src/guards/users.guard';
 import { Request } from 'express';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 @Controller('user/diagnose')
 export class DiagnosisController {
@@ -35,5 +36,11 @@ export class DiagnosisController {
   ): Promise<DiabetesDiagnosisHistory[]> {
     const user = req['user'];
     return await this.service.getAllDiabetesHistoryByUserId(user);
+  }
+  // admin all diabetes data
+  @UseGuards(AdminGuard)
+  @Get('diabetes/history/all')
+  async getAllUsersDiabetesHistory(): Promise<DiabetesDiagnosisHistory[]> {
+    return await this.service.getAllUsersDiabetesHistory();
   }
 }
