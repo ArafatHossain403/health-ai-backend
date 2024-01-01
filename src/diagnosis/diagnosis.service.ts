@@ -11,6 +11,7 @@ import {
 } from 'src/helper/functions';
 import { MailService } from 'src/helper/mail.service';
 import { ResponseModel } from 'src/helper/types';
+import * as moment from 'moment';
 
 @Injectable()
 export class DiagnosisService {
@@ -136,6 +137,7 @@ export class DiagnosisService {
           <td>Height (cm)</td>
           <td>Weight (kg)</td>
           <td>Result</td>
+          <td>Created At</td>
         </tr>
       </thead> 
 
@@ -160,6 +162,7 @@ export class DiagnosisService {
               : `<span style="color:green;">Negative</span>`
           }
           </td>
+          <td>${moment(history.created_at).format('llll')}</td>
         </tr>`;
     }
 
