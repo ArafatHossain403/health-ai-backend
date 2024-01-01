@@ -3,6 +3,7 @@ import { DiagnosisService } from './diagnosis.service';
 import { DiabetesDiagnosisHistory } from '@prisma/client';
 import { UserGuard } from 'src/guards/users.guard';
 import { Request } from 'express';
+import { ResponseModel } from 'src/helper/types';
 
 @Controller('user/diagnose')
 export class DiagnosisController {
@@ -35,5 +36,15 @@ export class DiagnosisController {
   ): Promise<DiabetesDiagnosisHistory[]> {
     const user = req['user'];
     return await this.service.getAllDiabetesHistoryByUserId(user);
+  }
+
+  @UseGuards(UserGuard)
+  @Post('diabetes/history/send-to-mail')
+  async sendDiabetesHistory(
+    @Req() req: Request,
+    @Body('to_mail_address') to: string,
+  ): Promise<ResponseModel> {
+    const user = req['user'];
+    return await this.service.sendDiabetesHistory(user, to);
   }
 }

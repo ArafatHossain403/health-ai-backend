@@ -10,6 +10,7 @@ import { AdminController } from './admin/admin.controller';
 import { AdminService } from './admin/admin.service';
 import { DiagnosisController } from './diagnosis/diagnosis.controller';
 import { DiagnosisService } from './diagnosis/diagnosis.service';
+import { MailService } from './helper/mail.service';
 
 @Module({
   imports: [
@@ -20,6 +21,12 @@ import { DiagnosisService } from './diagnosis/diagnosis.service';
     }),
   ],
   controllers: [UserController, AdminController, DiagnosisController],
-  providers: [UserService, AdminService, PrismaService, DiagnosisService],
+  providers: [
+    UserService,
+    AdminService,
+    PrismaService,
+    DiagnosisService,
+    MailService,
+  ],
 })
 export class AppModule {}
