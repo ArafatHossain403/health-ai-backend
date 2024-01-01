@@ -1,3 +1,5 @@
+import { ResponseModel } from './types';
+
 export function calculateAgeInYears(birth_date: Date): number {
   const days =
     (new Date().getTime() - birth_date.getTime()) / 1000 / 60 / 60 / 24;
@@ -67,4 +69,20 @@ export async function callFetcher(
     body: JSON.stringify(data),
   });
   return await response.json();
+}
+
+export function successResponse(message = '', code = 200): ResponseModel {
+  return {
+    success: true,
+    message: message,
+    code: code,
+  };
+}
+
+export function errorResponse(message = '', code = 500): ResponseModel {
+  return {
+    success: false,
+    message: message || 'Something went wrong',
+    code: code,
+  };
 }
