@@ -3,6 +3,7 @@ import { PrismaService } from '../helper/prisma.service';
 import { Admin } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { AdminModel } from 'src/helper/types';
 
 @Injectable()
 export class AdminService {
@@ -34,7 +35,7 @@ export class AdminService {
     return this.jwtService.sign(payload);
   }
 
-  async getAdminProfile(req: Request): Promise<Admin> {
+  async getAdminProfile(req: Request): Promise<AdminModel> {
     const admin: Admin = req['admin'];
     if (!admin) throw new BadRequestException('Invalid access token');
     return await this.prisma.admin.findFirst({

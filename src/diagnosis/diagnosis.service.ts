@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../helper/prisma.service';
-import { User, Prisma, DiabetesDiagnosisHistory } from '@prisma/client';
+import { Prisma, DiabetesDiagnosisHistory } from '@prisma/client';
 import {
   calculateAgeInYears,
   calculateBMI,
@@ -10,7 +10,7 @@ import {
   successResponse,
 } from 'src/helper/functions';
 import { MailService } from 'src/helper/mail.service';
-import { ResponseModel } from 'src/helper/types';
+import { DiabetesHistory, ResponseModel, UserModel } from 'src/helper/types';
 import * as moment from 'moment';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class DiagnosisService {
 
   async diagnoseDiabetes(
     data: Partial<Prisma.DiabetesDiagnosisHistoryCreateInput>,
-    user: User,
+    user: UserModel,
   ): Promise<DiabetesDiagnosisHistory> {
     data.age = calculateAgeInYears(user.birth_date);
     data.bmi = calculateBMI(data.height, data.weight);
@@ -84,20 +84,25 @@ export class DiagnosisService {
   }
 
   async getAllDiabetesHistoryByUserId(
-    user: User,
+    user: UserModel,
   ): Promise<DiabetesDiagnosisHistory[]> {
     const histories = await this.prisma.diabetesDiagnosisHistory.findMany({
       where: { user_id: user.id },
     });
-    console.log(histories);
     return histories;
   }
 
-  async getAllUsersDiabetesHistory(): Promise<DiabetesDiagnosisHistory[]> {
-    return await this.prisma.diabetesDiagnosisHistory.findMany();
+  async getAllUsersDiabetesHistory(): Promise<DiabetesHistory[]> {
+    const histories = await this.prisma.diabetesDiagnosisHistory.findMany({
+      include: { user: true },
+    });
+    return histories;
   }
 
-  async sendDiabetesHistory(user: User, to: string): Promise<ResponseModel> {
+  async sendDiabetesHistory(
+    user: UserModel,
+    to: string,
+  ): Promise<ResponseModel> {
     if (!to) {
       throw new BadRequestException('To Email Address missing');
     }
@@ -113,15 +118,11 @@ export class DiagnosisService {
     // }
 
     const html_content = this.processHtml(user, histories);
-    await this.mailService.sendMail(
-      'Diabetes Diagnosis Reports',
-      [to],
-      html_content,
-    );
+    this.mailService.sendMail('Diabetes Diagnosis Reports', [to], html_content);
     return successResponse('Mail sent successfully');
   }
 
-  processHtml(user: User, histories: DiabetesDiagnosisHistory[]): string {
+  processHtml(user: UserModel, histories: DiabetesDiagnosisHistory[]): string {
     let html_content = `
     <p><b>Name</b>: ${user.name}</p>
     <p><b>Gender</b>: ${user.gender}</p>

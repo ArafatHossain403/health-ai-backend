@@ -1,9 +1,9 @@
 import { Controller, Post, Body, Get, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User, User as UserModel } from '@prisma/client';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { Request } from 'express';
 import { UserGuard } from 'src/guards/users.guard';
+import { UserModel } from 'src/helper/types';
 
 @Controller('user')
 export class UserController {
@@ -38,13 +38,13 @@ export class UserController {
 
   @UseGuards(UserGuard)
   @Get('/profile')
-  async getUSerProfile(@Req() req: Request): Promise<User> {
+  async getUSerProfile(@Req() req: Request): Promise<UserModel> {
     return await this.userService.getUserProfile(req);
   }
 
   @UseGuards(AdminGuard)
   @Get('/list')
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<UserModel[]> {
     return await this.userService.getAllUsers();
   }
 }

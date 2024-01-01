@@ -4,7 +4,7 @@ import { DiabetesDiagnosisHistory } from '@prisma/client';
 import { UserGuard } from 'src/guards/users.guard';
 import { Request } from 'express';
 import { AdminGuard } from 'src/guards/admin.guard';
-import { ResponseModel } from 'src/helper/types';
+import { DiabetesHistory, ResponseModel } from 'src/helper/types';
 
 @Controller('user/diagnose')
 export class DiagnosisController {
@@ -41,7 +41,7 @@ export class DiagnosisController {
   // admin all diabetes data
   @UseGuards(AdminGuard)
   @Get('diabetes/history/all')
-  async getAllUsersDiabetesHistory(): Promise<DiabetesDiagnosisHistory[]> {
+  async getAllUsersDiabetesHistory(): Promise<DiabetesHistory[]> {
     return await this.service.getAllUsersDiabetesHistory();
   }
 

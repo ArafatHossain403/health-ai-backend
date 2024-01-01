@@ -1,8 +1,8 @@
 import { Controller, Post, Body, UseGuards, Get, Req } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { AdminGuard } from 'src/guards/admin.guard';
-import { Admin } from '@prisma/client';
 import { Request } from 'express';
+import { AdminModel } from 'src/helper/types';
 
 @Controller('admin')
 export class AdminController {
@@ -21,7 +21,7 @@ export class AdminController {
 
   @UseGuards(AdminGuard)
   @Get('/profile')
-  async getUSerProfile(@Req() req: Request): Promise<Admin> {
+  async getUSerProfile(@Req() req: Request): Promise<AdminModel> {
     return await this.service.getAdminProfile(req);
   }
 }
