@@ -20,18 +20,23 @@ export class MailService {
     from_address?: string,
     from_name?: string,
   ): Promise<boolean> {
-    const info = await this.transporter.sendMail({
-      from: `"${from_name || mailConfig.app}" <${
-        from_address || mailConfig.from
-      }>`, // sender name & address
-      to: to_addresses.toString(), // list of receivers
-      subject: subject, // Subject line
-      text: text_content, // plain text body
-      html: html_content, // html body
-      attachments: attachments,
-    });
-    // console.log('mail sent info: ', info);
-    if (info?.messageId) return true;
-    else return false;
+    try {
+      const info = await this.transporter.sendMail({
+        from: `"${from_name || mailConfig.app}" <${
+          from_address || mailConfig.from
+        }>`, // sender name & address
+        to: to_addresses.toString(), // list of receivers
+        subject: subject, // Subject line
+        text: text_content, // plain text body
+        html: html_content, // html body
+        attachments: attachments,
+      });
+      // console.log('mail sent info: ', info);
+      if (info?.messageId) return true;
+      else return false;
+    } catch (e) {
+      console.error(e.stack);
+      return false;
+    }
   }
 }
