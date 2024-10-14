@@ -11,6 +11,8 @@ import { AdminService } from './admin/admin.service';
 import { DiagnosisController } from './diagnosis/diagnosis.controller';
 import { DiagnosisService } from './diagnosis/diagnosis.service';
 import { MailService } from './helper/mail.service';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -20,13 +22,19 @@ import { MailService } from './helper/mail.service';
       signOptions: { expiresIn: process.env.JWT_EXPIRY || '24h' }, // Adjust the expiration time as needed
     }),
   ],
-  controllers: [UserController, AdminController, DiagnosisController],
+  controllers: [
+    UserController,
+    AdminController,
+    DiagnosisController,
+    AppController,
+  ],
   providers: [
     UserService,
     AdminService,
     PrismaService,
     DiagnosisService,
     MailService,
+    AppService,
   ],
 })
 export class AppModule {}
